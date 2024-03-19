@@ -93,78 +93,78 @@ where Id = 10
 
 select * from Person
 
--- k]ik, kes elavad Gothami linnas
+-- kõik, kes elavad Gothami linnas
 select * from Person where City = 'Gotham'
---k]ik, kes ei ela Gothamis
+--kõik, kes ei ela Gothamis
 select * from Person where City <> 'Gotham'
---k]ik, kes ei ela Gothamis
+--kõik, kes ei ela Gothamis
 select * from Person where City != 'Gotham'
 
--- n'itab teatud vanusega inimesi
+-- näitab teatud vanusega inimesi
 select * from Person where Age = 120 or Age = 50 or Age = 19
 select * from Person where Age in (120, 50, 19)
 
--- n'itab teatud vanusevahemikus olevaid inimesi
+-- näitab teatud vanusevahemikus olevaid inimesi
 -- ka 22 ja 31 aastaseid
 select * from Person where Age between 22 and 31
 
--- wildcard e n'itab k]ik n-t'hega linnad
--- n-t'hega algavad linnad
+-- wildcard e näitab kõik n-tähega linnad
+-- n-tähega algavad linnad
 select * from Person where City like 'n%'
---k]ik emailid, kus on @-m'rk sees
+--kõik emailid, kus on @-märk sees
 select * from Person where Email like '%@%'
 
--- n'itab Emaile, kus ei ole @-m'rki sees
+-- näitab Emaile, kus ei ole @-märki sees
 select * from Person where Email not like '%@%'
 
---n'itab, kellel on emailis ees ja peale @-m'rki ainult [ks t'ht
+--näitab, kellel on emailis ees ja peale @-m'rki ainult [ks täht
 select * from Person where Email like '_@_.com'
 
 update Person
 set Email = 'bat@bat.com'
 where Id = 3
 
--- k]ik, kellel nimes ei ole esimene t'ht W, A, C
+-- kõik, kellel nimes ei ole esimene täht W, A, C
 select * from Person where name like '[^WAC]%'
 select * from Person
 
 --kes elavad Gothamis ja New York-s
 select * from Person where (City = 'Gotham' or City = 'New York')
 
--- k]ik, kes elavad v'lja toodud linnades ja on vanemad, kui
+-- kõik, kes elavad välja toodud linnades ja on vanemad, kui
 -- 29
 select * from Person where (City = 'Gotham' or City = 'New York')
 and Age >= 30
 
--- kuvab t'hestikulises j'rjekorras inimesi ja v]tab 
+-- kuvab tähestikulises järjekorras inimesi ja võtab 
 -- aluseks nime
 select * from Person order by Name
--- kuvab vastupidises j'rjestuses
+-- kuvab vastupidises järjestuses
 select * from Person order by Name desc
 
---v]tab kolm esimest rida
+--võtab kolm esimest rida
 select top 3 * from Person
 
--- kolm esimest, aga tabeli j'rjestus on Age ja siis Name
+-- kolm esimest, aga tabeli järjestus on Age ja siis Name
 select * from Person
 select top 3 Age, Name from Person
 
--- n'ita esimene 50% tabeli sisust
+-- näita esimene 50% tabeli sisust
 select top 50 percent * from Person
 
---j'rjestab vanuse j'rgi isikud
+--järjestab vanuse järgi isikud
 select * from Person order by cast(Age as int)
 
 --05.03.2024
---k]ikide isikute koondvanus
+--kõikide isikute koondvanus
 select sum(cast(Age as int)) from Person
 
---kuvab k]ige nooremat isikut
+--kuvab kõige nooremat isikut
 select min(cast(Age as int)) from Person
---kuvab k]ige vanemat isikut
+--kuvab kõige vanemat isikut
 select max(cast(Age as int)) from Person
 
---n'eme konkreetsetes linnades olevate isikute koondvanust
+--näeme konkreetsetes linnades olevate isikute koondvanust
 select City, sum(cast(Age as int)) as TotalAge from Person 
 group by City
 
@@ -172,8 +172,8 @@ group by City
 alter table Person
 alter column Age int
 
---kuvab esimeses reas v'lja toodud j'rjestuses ja muudab Age-i TotalAge-ks
---j'rjestab Citys olevate nimede j'rgi ja siis GenderId j'rgi
+--kuvab esimeses reas välja toodud järjestuses ja muudab Age-i TotalAge-ks
+--järjestab Citys olevate nimede järgi ja siis GenderId järgi
 select City, GenderId, sum(Age) as TotalAge from Person
 group by City, GenderId
 order by City
@@ -181,18 +181,18 @@ order by City
 insert into Person values
 (11, 'Robin', 'robin@r.com', 1, 29, 'Gotham')
 
---n'itab ridade arvu tabelis
+--näitab ridade arvu tabelis
 select count(*) from Person
 select * from Person
 
---n'itab tulemust, et mitu inimest on GenderId v''rtusega 2 konkreetses linnas
+--näitab tulemust, et mitu inimest on GenderId väärtusega 2 konkreetses linnas
 --arvutab vanuse kokku selles linnas
 select GenderId, City, sum(Age) as TotalAge, count(Id) as [Total Person(s)]
 from Person
 where GenderId = '1'
 group by GenderId, City
 
---n'itab 'ra inimeste koondvanuse, mis on [le 41 a ja 
+--näitab ära inimeste koondvanuse, mis on [le 41 a ja 
 --kui palju neid igas linnas elab 
 --eristab inimese soo ära
 select GenderId, City, sum(Age) as TotalAge, count(Id)
@@ -247,11 +247,11 @@ from Employees
 left join Department
 on Employees.DepartmentId = Department.Id
 
---arvutab k]ikide palgad kokku Employees tabelis
+--arvutab kõikide palgad kokku Employees tabelis
 select sum(cast(Salary as int)) from Employees
 --min palga saaja
 select min(cast(Salary as int)) from Employees
--- [he kuu palga saaja linnade l]ikes
+-- ühe kuu palga saaja linnade lõikes
 select Location, sum(cast(Salary as int)) as TotalSalary 
 from Employees
 left join Department 
@@ -266,31 +266,31 @@ update Employees
 set City = 'New York'
 where Id = 10
 
---n'itab erinevust palgafondi osas nii linnade kui ka soo osas
+--näitab erinevust palgafondi osas nii linnade kui ka soo osas
 select City, Gender, sum(cast(Salary as int)) as TotalSalary from Employees
 group by City, Gender
---sama p'ring nagu eelmine, aga linnad on t'hestikulises j'rjekorras
+--sama päring nagu eelmine, aga linnad on tähestikulises järjekorras
 select City, Gender, sum(cast(Salary as int)) as TotalSalary from Employees
 group by City, Gender
 order by City
 
--- loeb 'ra ridade arvu Employees tabelis
+-- loeb ära ridade arvu Employees tabelis
 select count(*) from Employees
 
---mitu t;;tajat on soo ja linna kaupa
+--mitu töötajat on soo ja linna kaupa
 select Gender, City,
 count (Id) as [Total Employee(s)]
 from Employees
 group by Gender, City
 
---kuvab ainult k]ik naised linnade kaupa
+--kuvab ainult kõik naised linnade kaupa
 select Gender, City,
 count (Id) as [Total Employee(s)]
 from Employees
 where Gender = 'female'
 group by Gender, City
 
---kuvab ainult k]ik mehed linnade kaupa
+--kuvab ainult kõik mehed linnade kaupa
 --ja kkasutame having
 select Gender, City,
 count (Id) as [Total Employee(s)]
@@ -330,22 +330,22 @@ select * from Employees
 select * from Department
 
 --left join
--- kuidas saada k]ik andmed Employeest k'tte
+-- kuidas saada kõik andmed Employeest kätte
 select Name, Gender, Salary, DepartmentName
 from Employees
-left join Department -- v]i kasutada ka LEFT OUTER JOIN-i
+left join Department -- või kasutada ka LEFT OUTER JOIN-i
 on Employees.DepartmentId = Department.Id
 
 --- right join
 --- kuidas saada DepartmentName alla uus nimetus 
 select Name, Gender, Salary, DepartmentName
 from Employees
-right join Department -- v]i kasutada ka RIGHT OUTER JOIN-i
+right join Department -- või kasutada ka RIGHT OUTER JOIN-i
 on Employees.DepartmentId = Department.Id
 
 select * from Department
 
--- kuidas saada k]ikide tabelite v''rtused [hte p'ringusse
+-- kuidas saada kõikide tabelite väärtused ühte päringusse
 select Name, Gender, Salary, DepartmentName
 from Employees
 full outer join Department
@@ -378,7 +378,7 @@ on Employees.DepartmentId = Department.Id
 where Department.Id is null
 
 -- full join
--- m]lema tabeli mitte-kattuvate v''rtustega read kuvab v'lja
+-- mõlema tabeli mitte-kattuvate väärtustega read kuvab välja
 select Name, Gender, Salary, DepartmentName
 from Employees
 full join Department
@@ -397,7 +397,7 @@ where Employees.DepartmentId is null
 -- alguses vana tabeli nimi ja siis uue nimi
 sp_rename 'Department1', 'Department'
 
--- kasutame Employees tabeli asemel l[hendit E ja 
+-- kasutame Employees tabeli asemel lühendit E ja 
 -- Departmenti puhul D
 select E.Name as EmpName, D.DepartmentName as DeptName
 from Employees E
@@ -406,7 +406,7 @@ on E.DepartmentId = D.Id
 
 --inner join
 -- kuvab ainult isikuid, 
--- kellel on DepartmentId veerus v''rtus 
+-- kellel on DepartmentId veerus väärtus 
 select E.Name as EmpName, D.DepartmentName as DeptName
 from Employees E
 inner join Department D
@@ -423,21 +423,21 @@ select isnull('Ingvar', 'No Manager') as Manager
 -- NULL asemel kuvab No Manager
 select coalesce(NULL, 'No Manager') as Manager
 
---kui Expression on ]ige, siis paneb v''rtuse, 
--- mida soovid v]i m]ne teise v''rtuse 
+--kui Expression on õige, siis paneb väärtuse, 
+-- mida soovid või mõne teise väärtuse 
 case when Expression Then '' else '' end
 
 ---
 alter table Employees
 add ManagerId int
 
---neil, kellel ei ole [lemust, siis panb neile No manager teksti
+--neil, kellel ei ole ülemust, siis panb neile No manager teksti
 select E.Name as Employee, isnull(M.Name, 'No Manager') as Manager
 from Employees E
 left join Employees M
 on E.ManagerId = M.Id
 
--- teeme p'ringu, kus kasutame case-i
+-- teeme päringu, kus kasutame case-i
 select E.Name as Employee, case when M.Name is null then 'No Manager'
 else M.Name end as Manager
 from Employees E
@@ -492,7 +492,7 @@ update Employees
 set FirstName = NULL, MiddleName = NULL, LastName = 'Crowe'
 where Id = 10
 
--- igast reast v]tab esimesena t'idetud lahtri ja kuvab ainult seda
+-- igast reast võtab esimesena täidetud lahtri ja kuvab ainult seda
 select Id, coalesce(FirstName, MiddleName, LastName) as Name
 from Employees
 
@@ -525,17 +525,17 @@ values ('Ben', 'B@B.com'),
 select * from IndianCustomers
 select * from UKCustomers
 
---kasutame union all, mis n'itab k]iki ridu
+--kasutame union all, mis näitab kõiki ridu
 select Id, Name, Email from IndianCustomers
 union all
 select Id, Name, Email from UKCustomers
 
--- korduvate v''rtustega read pannakse [hte aj ei korrata
+-- korduvate väärtustega read pannakse ühte aj ei korrata
 select Id, Name, Email from IndianCustomers
 union
 select Id, Name, Email from UKCustomers
 
---kuidas sorteerida nime j'rgi
+--kuidas sorteerida nime järgi
 select Id, Name, Email from IndianCustomers
 union
 select Id, Name, Email from UKCustomers
@@ -547,7 +547,7 @@ as begin
 	select FirstName, Gender from Employees
 end
 
--- n[[d saab kasutada selle nimelist sp-d
+-- nüüd saab kasutada selle nimelist sp-d
 spGetEmployees
 exec spGetEmployees
 execute spGetEmployees
@@ -561,7 +561,7 @@ as begin
 	and DepartmentId = @DepartmentId
 end
 
--- kui n[[d allolevat k'sklust k'ima panna, siis n]uab Gender parameetrit
+-- kui nüüd allolevat käsklust käima panna, siis nõuab Gender parameetrit
 spGetEmployeesByGenderAndDepartment
 --õige variant
 spGetEmployeesByGenderAndDepartment 'male', 1
@@ -572,7 +572,7 @@ spGetEmployeesByGenderAndDepartment @DepartmentId = 1, @Gender = 'Male'
 --- saab sp sisu vaadata result vaates
 sp_helptext spGetEmployeesByGenderAndDepartment
 
--- kuidas muuta sp-d ja v]ti peale panna, 
+-- kuidas muuta sp-d ja võti peale panna, 
 -- et keegi teine peale teie ei saaks muuta
 alter proc spGetEmployeesByGenderAndDepartment
 @Gender nvarchar(20),
@@ -592,7 +592,7 @@ as begin
 	select @EmployeeCount = count(Id) from Employees where Gender = @Gender
 end
 
--- annab tulemuse, kus loendab 'ra n]uetele vastavad read
+-- annab tulemuse, kus loendab ära nõuetele vastavad read
 -- prindib ka tulemuse kirja teel
 declare @TotalCount int
 execute spGetEmployeeCountByGender 'male', @TotalCount out
@@ -601,8 +601,7 @@ if(@TotalCount = 0)
 else
 	print '@TotalCount is not null'
 print @TotalCount
-go --tee [levalpool p'ring 'ra ja siis mine edasi
+go --tee ülevalpool päring ära ja siis mine edasi
 select * from Employees
 
 -- rida 610
-select * from Employees
