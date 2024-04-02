@@ -788,3 +788,212 @@ from Employees
 select FirstName, LastName, Email,
 	stuff(Email, 2, 3, '*****') as StuffedEmail
 from Employees
+
+create table DateTime
+(
+c_time time,
+c_date date,
+c_smalldatetime smalldatetime,
+c_datetime datetime,
+c_datetime2 datetime2,
+c_datetimeoffset datetimeoffset
+)
+
+select * from DateTime
+
+-- konkreetse masina kellaaeg
+select getdate(), 'GETDATE()'
+
+insert into DateTime
+values(getdate(), getdate(), getdate(), getdate(), getdate(), getdate())
+
+update DateTime set c_datetimeoffset = '2024-04-02 09:33:46.0133333 +11:00'
+where c_datetimeoffset = '2024-04-02 09:33:46.0133333 +00:00'
+
+select current_timestamp, 'current_timestamp' -- aja päring
+select sysdatetime(), 'sysdatetime' -- veel täpsem aja päring
+select sysdatetimeoffset(), 'sysdatetimeoffset' -- täpne aeg koos ajalise nihkega UTC suhtes
+select getutcdate(), 'getutcdate' -- UTC aeg
+
+select isdate('asd') -- tagastab 0 kuna string ei ole date
+select isdate(getdate()) -- tagastab 1 kuna on kuupäev
+select isdate('2024-04-02 09:33:46.0133333') -- tagastab 0 kuna max kolm komakohta võib olla
+select isdate('2024-04-02 09:33:46.003') -- tagastab 1
+select day(getdate()) -- annab tänase päeva numbri
+select day('2024-04-02') -- annab stringis oleva kuupäeva ja järjestus peab olema õige
+select month(getdate()) -- annab tänase kuu numbri
+select month('2024-04-02') -- annab stringis oleva kuu numbri
+select year(getdate()) -- annab tänase aasta numbri
+select year('2024-04-02') -- annab stringis oleva aasta numbri
+
+select datename(day, '2024-04-02 09:33:46.003') -- annab stringis oleva päeva numbri
+select datename(weekday, '2024-04-02 09:33:46.003') -- annab stringis oleva päeva sõnana
+select datename(month, '2024-04-02 09:33:46.003') -- annab stringis oleva kuu sõnana
+
+create table EmployeesWithDates
+(
+Id nvarchar(2),
+Name nvarchar(20),
+DateOfBirth datetime
+)
+
+select * from EmployeesWithDates
+
+insert into EmployeesWithDates (Id, Name, DateOfBirth)
+values 
+(1, 'Sam', '1980-12-30 00:00:00.000'),
+(2, 'Pam', '1982-09-01 12:02:36.206'),
+(3, 'John', '1985-08-22 12:03:30.370'),
+(4, 'Sara', '1979-11-29 12:59:30.670'),
+(5, 'Todd', '1979-11-29 12:59:30.670');
+
+select * from EmployeesWithDates
+--- kuidas võtta ühest veerust andmeid ja selle abil luua uued andmed
+select Name, DateOfBirth, Datename(weekday, DateOfBirth) as [Day], -- vt DoB veerust päeva ja kuvab päeva nimetuse 
+		month(DateOfBirth) as MonthNumber, -- vt DoB veerust kp-d ja kuvab kuu nr
+		datename(month, DateOfBirth) as [MonthName], -- vt DoB veerust kuus ja kuvab sõnana
+		year(DateOfBirth) as [Year] -- võtab DoB veerust aasta
+from EmployeesWithDates
+
+select datepart(weekday, '2024-04-02 09:33:46.003') --- kuvab 3 kuna USA nädal algab pühapäevaga
+select datepart(month, '2024-04-02 09:33:46.003') --- kuvab kuu nr
+select dateadd(day, 20, '2024-04-02 09:33:46.003') -- liidab stringis olevale kp 20 päeva juurde
+select dateadd(day, -20, '2024-04-02 09:33:46.003') -- lahutab stringis olevale kp 20 päeva juurde
+select datediff(month, '11/30/2023', '04/02/2024') -- kuvab kahe stringi kuudevahelist aega nr-ga
+select datediff(year, '11/30/2023', '04/02/2024') -- kuvab kahe stringi aastavahelist aega nr-ga
+
+---
+create function fnComputeAge(@DOB datetime)
+returns nvarchar(50)
+as begin
+	declare @tempdate datetime, @years int, @months int, @days int
+		select @tempdate = @DOB
+		
+		select @years = datediff(year, @tempdate, getdate()) - case when (month(@DOB) > month(getdate())) or (month(@DOB)
+		= month (getdate()) and day(@DOB) > day(getdate())) then 1 else 0 end
+		select @tempdate = dateadd(year, @years, @tempdate)
+
+		select @months = datediff(month, @tempdate, getdate()) - case when day(@DOB) > day(getdate()) then 1 else 0 end
+		select @tempdate = dateadd(month, @months, @tempdate)
+
+		select @days = datediff(day, @tempdate, getdate())
+
+	declare @Age nvarchar(50)
+		set @Age = cast(@years as nvarchar(4)) + ' Years ' + cast(@months as nvarchar(2)) + ' Months ' + cast(@days as nvarchar(2)) + 
+		' Days old '
+	return @Age
+end
+
+-- saame vaadata kasutajate vanust
+select Id, Name, DateOfBirth, dbo.fnComputeAge(DateOfBirth) as Age from EmployeesWithDates
+
+-- kui kasutame seda funktsiooni, siis saame teada tänase päeva vahet stringis välja
+--tooduga 
+select dbo.fnComputeAge('11/30/2011')
+
+-- nr peale DOB muutujat näitab, et mismoodi kuvada DOB-d
+select Id, Name, DateOfBirth,
+convert(nvarchar, DateOfBirth, 126) as ConvertedDOB
+from EmployeesWithDates
+
+select Id, Name, Name + ' - ' + cast(Id as nvarchar) as [Name-Id] from EmployeesWithDates 
+
+select cast(getdate() as date) -- tänane kuupäev
+select convert(date, getdate()) -- tänane kuupäev
+
+-- matemaatilised funktsioonid
+
+select abs(-101.5) -- absoluutväärtus nr ja tulemuseks saame ilma miinus märgita tulemuse
+select ceiling(15.2) -- ümardab ülesse täisarvu suunas
+select ceiling(-15.2) -- ümardab positiivsema arvu poole
+select floor(15.2) -- ümardab alla täisarvu suunas
+select floor(-15.2) -- ümardab negatiivsema arvu poole
+select power(2, 4) -- hakkab koorutama 2x2x2x2 (astendama), esimene nr on korrutatav
+select square(9) -- antud juhul 9 ruudus
+select sqrt(81) -- annab vastuse 9, ruutjuur
+
+select rand() -- annab suvalise numbri
+select floor(rand() * 100) -- annab suvalise täisarvu
+
+--iga kord näitab 10 suvalist numbrit
+declare @counter int
+set @counter = 1
+while (@counter <= 10)
+begin
+	print floor(rand() * 1000)
+	set @counter = @counter + 1
+end
+
+select round(850.556, 2) -- ümardab kaks kohta peal komat, tulemus on 850.560
+select round(850.556, 2, 1) -- ümardab allapoole, tulemus on 850.550
+select round(850.556, 0) -- ümardab üles poole ja võtab ainult esimest nr peale koma arvesse 851.000
+select round(850.556, 1, 1) -- ümardab allapoole
+select round(850.556, -2) -- ümardab täisnr ülesse
+select round(850.556, -1) -- ümardab täisnr allapoole
+
+create function dbo.CalculateAge(@DOB date)
+returns int
+as begin
+declare @Age int
+	
+set @Age = datediff(YEAR, @DOB, GETDATE()) - 
+	case
+		when (month(@DOB) > month(getdate())) or
+			 (month(@DOB) > month(getdate()) and day(@DOB) > day(getdate()))
+		then 1
+		else 0
+		end
+	return @Age
+end
+
+exec CalculateAge '10/08/2022'
+
+-- arvutab välja, kui vana on isik ja võtab arvesse kuud ja päevad
+-- antud juhul näitab kõike, kes on üle 36 aasta vanad
+select Id, Name, dbo.CalculateAge(DateOfBirth) as Age from EmployeesWithDates
+where dbo.CalculateAge(DateOfBirth) > 42
+
+alter table EmployeesWithDates
+add DepartmentId int 
+alter table EmployeesWithDates
+add Gender nvarchar(10) 
+
+
+INSERT INTO EmployeesWithDates(Id, Name, DateOfBirth, DepartmentId, Gender)
+VALUES
+(1, 'Sam', '1980-12-30 00:00:00.000', 1, 'Male'),
+(2, 'Pam', '1982-09-01 12:02:36.206', 2, 'Female'),
+(3, 'John', '1985-08-22 12:03:30.370', 1, 'Male'),
+(4, 'Sara', '1979-11-29 12:59:30.670', 3, 'Female'),
+(5, 'Todd', '1979-11-29 12:59:30.670', 1, 'Male');
+
+
+
+-- scalare function annab mingid vahémikus olevaid andmeid, aga
+-- inline table values ei kasuta begin ja end funktsioone
+--scalar annab väärtused ja inline annab tabeli
+create function fn_EmployeesByGender(@Gender nvarchar(10))
+returns table
+as
+return (select Id, Name, DateOfBirth, DepartmentId, Gender
+		from EmployeesWithDates
+		Where Gender = @Gender)
+
+-- kõik female töötajad
+select * from fn_EmployeesByGender('female')
+
+-- kuidas saaks samat päringut täpsustada
+select * from fn_EmployeesByGender('female')
+where Name = 'Pam'
+
+select * from Department
+
+-- kahest erinevast tabelist andmete võtmine ja koos kuvamine
+-- esimene on funktsioon ja teine tabel
+select Name, Gender, DepartmentName
+from fn_EmployeesByGender('Male') E
+join Department D on D.Id = E.DepartmentId 
+
+
+
+
